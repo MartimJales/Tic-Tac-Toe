@@ -1,3 +1,3 @@
 # Tic-Tac-Toe
 
-* Little program to play tic tac toe in Terminal
+* Little program to play Tic Tac Toe in Terminal
