@@ -1,50 +1,97 @@
 import numpy as np
 from numpy.core.arrayprint import dtype_short_repr
 from os import system
+from time import sleep
+import random
+
+from numpy.random import random_integers
+from minimax import *
 
 
 def main():
+    first = -1
     game = np.zeros((3, 3), dtype=int)
-    game[0][0] = -1
-    play = 1
+    while first != 1 and first != 0:
+        print('Who play first?')
+        print('0 - Human')
+        print('1 - PC')
+        first = int(input('Chose: '))
+        if first != 1 and first != 0:
+            system('clear')
+            print('Insert a valid number please!')
+            sleep(2)
+            system('clear')
+
+    if first == 0:
+        pass
+    else:
+        # Mudar esta lógica para dar mais hipótese quando é o PC a começar
+        game[random.randint(0, 2)][random.randint(0, 2)] = -1
     while 1:
+        # Imprimir o estado do jogo atual
+        print_game(game)
+        valid = 0
+        # Jogada do ser humano com validação das posições válidas
+        while valid == 0:
+            print('Insert your coords:')
+            line = int(input('Line: '))
+            column = int(input('Column: '))
+            if game[line][column] == 0:
+                valid = 1
+            else:
+                system('clear')
+                print('Invalid position!')
+                sleep(2)
+                system('clear')
+                print_game(game)
+        game[line][column] = 1
+
+        # Verificar se o humano ganhou
         winner = check_winner(game)
         if winner == 1:
             print('Humano ganhou!')
             print_game(game)
             break
+
+        # Chamar a função que encontra a melhor jogada:
+
+        best_move(game)
+        system('clear')
+
+        # Verificar se o PC ganhou
+        winner = check_winner(game)
         if winner == 2:
             print('PC ganhou')
             print_game(game)
             break
-        print_game(game)
-        print('Coloque as coordenadas onde deseja jogar:')
-        line = int(input('Linha: '))
-        column = int(input('Coluna: '))
-        game[line][column] = 1
-        attack = check_attack(game)
-        if attack != 0:
-            go_attack(game, attack)  # Codigo para encontrar o killer spot
-        else:
-            defense = check_defense(game, line, column)
-            if defense == 0:
-                if check_corner(line, column):
-                    if play == 1:
-                        go_corner(game)
-                    print('Jogou no canto!')
-                elif (check_center(line, column)):
-                    print('Jogou no centro')
-                    if play == 1:
-                        game[2][2] = -1
-                    pass
-                else:
-                    if play == 1:
-                        game[1][1] = -1
-                    print('Jogou no meio')
-            else:
-                go_defense(game, defense)
-        play += 1
-    # system('clear')
+        if check_fill(game):
+            print('Tie')
+            print_game(game)
+            break
+
+    # Old logic without nminimax
+    #    attack = check_attack(game)
+    #    if attack != 0:
+    #        go_attack(game, attack)  # Codigo para encontrar o killer spot
+    #    else:
+    #        defense = check_defense(game, line, column)
+    #        if defense == 0:
+    #            if check_corner(line, column):
+    #                if play == 1:
+    #                    go_corner(game)
+    #                print('Jogou no canto!')
+    #            elif (check_center(line, column)):
+    #                print('Jogou no centro')
+    #                if play == 1:
+    #                    game[2][2] = -1
+    #                pass
+    #            else:
+    #                if play == 1:
+    #                    game[1][1] = -1
+    #                print('Jogou no meio')
+    #        else:
+    #            go_defense(game, defense)
+    system('clear')
     print('Saiu do ciclo')
 
 # Funções par afazer verificiações do estado do jogo
@@ -146,7 +193,8 @@ def print_game(game):
             if not(j == 2):
                 print('|', end='')
         print()
-        print('~~~~~~')
+        if i != 2:
+            print('~~~~~~')
 
 # Funções para alterar  estado do jogo
 
