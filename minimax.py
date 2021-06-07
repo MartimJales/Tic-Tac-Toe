@@ -1,6 +1,3 @@
-import numpy as np
-
-
 # Função que verifica se alguém ganhou o jogo
 
 
